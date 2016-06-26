@@ -79,11 +79,17 @@ struct foo_struct
     }
     uint64_t value1 = 1;
     uint64_t value2 = 2;
+    uint64_t value3 = 3;
+    uint64_t value4 = 4;
 };
 #pragma pack(pop)
 
 void testAllocateShared()
 {
+    using control_block_type = std::_Sp_counted_ptr_inplace<foo_struct, custom_allocator<foo_struct>, (__gnu_cxx::_Lock_policy)2>;
+    std::cout << "sizeof control_block_type: " << sizeof(control_block_type) << std::endl;
+    std::cout << "sizeof foo_struct: " << sizeof(foo_struct) << std::endl;
+
     custom_allocator<foo_struct > alloc;
     auto foo = std::allocate_shared<foo_struct> (alloc);
 }
@@ -99,21 +105,16 @@ void testConstructShared()
 
 int main() {
 
-    using control_block_type = std::_Sp_counted_ptr_inplace<foo_struct, custom_allocator<foo_struct>, (__gnu_cxx::_Lock_policy)2>;
-    std::cout << "sizeof control_block_type: " << sizeof(control_block_type) << std::endl;
-    std::cout << "sizeof foo_struct: " << sizeof(foo_struct) << std::endl;
-    //std::cout << "sizeof shared_ptr<foo> = " << sizeof(foo) << std::endl;
-
-    std::cout << "---- Allocate shared ----" << std::endl;
-    testAllocateShared();
-    std::cout << "---- Allocate shared ----" << std::endl;
+    std::cout << "---- Construct shared ----" << std::endl;
+    testConstructShared();
+    std::cout << "---- Construct shared ----" << std::endl;
 
     std::cout << "---- Make shared ----" << std::endl;
     testMakeShared();
     std::cout << "---- Make shared ----" << std::endl;
 
-    std::cout << "---- Construct shared ----" << std::endl;
-    testConstructShared();
-    std::cout << "---- Construct shared ----" << std::endl;
+    std::cout << "---- Allocate shared ----" << std::endl;
+    testAllocateShared();
+    std::cout << "---- Allocate shared ----" << std::endl;
     return 0;
 }
